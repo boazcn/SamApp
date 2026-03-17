@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edge226 Cold Outreach Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080b10;--surface:#0e1320;--surface2:#141c2e;--border:#1e2d47;--accent:#3b82f6;--accent2:#f59e0b;--accent3:#10b981;--text:#e2e8f0;--muted:#64748b;--red:#ef4444;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(59,130,246,.08) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 90% 80%,rgba(245,158,11,.05) 0%,transparent 50%);}
+  .wrap{max-width:1280px;margin:0 auto;padding:36px 24px;position:relative;z-index:1;}
+  .brand{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.05;}
+  h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .sub{margin-top:8px;color:var(--muted);font-size:14px;max-width:480px;line-height:1.6;}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:24px;margin-top:32px;align-items:start;}
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+  .panel:last-child{margin-bottom:0;}
+  .phd{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+  .phd h3{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
+  .pbd{padding:18px;}
+  .pip{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .pip.b{background:var(--accent);box-shadow:0 0 7px var(--accent);}
+  .pip.a{background:var(--accent2);box-shadow:0 0 7px var(--accent2);}
+  .pip.g{background:var(--accent3);box-shadow:0 0 7px var(--accent3);}
+  .fg{margin-bottom:14px;}
+  .fg:last-child{margin-bottom:0;}
+  label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  label span{font-size:9px;letter-spacing:0;text-transform:none;color:var(--muted);margin-left:4px;}
+  input,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+  input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+  textarea{resize:vertical;min-height:64px;line-height:1.5;font-size:12px;}
+  .row2{display:flex;gap:8px;}
+  .row2 input{flex:1;}
+  .btn-research{padding:9px 13px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.4);border-radius:7px;color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+  .btn-research:hover{background:rgba(59,130,246,.2);}
+  .btn-research:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-block{width:100%;margin-top:8px;padding:10px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.4);border-radius:8px;color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:center;}
+  .btn-block:hover{background:rgba(59,130,246,.2);}
+  .btn-block:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;border-radius:10px;color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:16px;}
+  .btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+  .btn-seq{width:100%;padding:14px;background:linear-gradient(135deg,#065f46,#10b981);border:none;border-radius:10px;color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:10px;}
+  .btn-seq:hover{filter:brightness(1.1);transform:translateY(-1px);}
+  .btn-seq:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+  .ibox{margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;color:var(--muted);line-height:1.6;white-space:pre-line;display:none;}
+  .ibox.show{display:block;}
+  .ibox strong{color:var(--accent3);font-size:10px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:5px;}
+  .variants{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .vc{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;cursor:pointer;transition:all .18s;position:relative;}
+  .vc:hover{border-color:var(--muted);}
+  .vc.on{border-color:var(--accent);background:rgba(59,130,246,.06);}
+  .vc-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:3px;}
+  .vc-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;}
+  .vc-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+  .vc-dot{position:absolute;top:11px;right:11px;width:15px;height:15px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .18s;}
+  .vc.on .vc-dot{border-color:var(--accent);background:var(--accent);}
+  .vc.on .vc-dot::after{content:'✓';font-size:9px;color:#fff;font-weight:700;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);font-size:11px;font-family:'DM Mono',monospace;cursor:pointer;transition:all .18s;color:var(--muted);}
+  .tag.on{border-color:var(--accent2);background:rgba(245,158,11,.1);color:var(--accent2);}
+  .tag:hover:not(.on){color:var(--text);border-color:var(--muted);}
+  .output-pane{position:sticky;top:24px;}
+  .otabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:16px;}
+  .otab{flex:1;padding:9px;background:transparent;border:none;border-radius:7px;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+  .otab.on{background:var(--accent);color:#fff;}
+  .otab:hover:not(.on){color:var(--text);}
+  .otab-content{display:none;}
+  .otab-content.on{display:block;}
+  .email-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .email-chrome{background:var(--surface2);border-bottom:1px solid var(--border);padding:14px 20px;}
+  .dots{display:flex;gap:6px;margin-bottom:12px;}
+  .dot{width:11px;height:11px;border-radius:50%;}
+  .dot:nth-child(1){background:#ef4444;}
+  .dot:nth-child(2){background:#f59e0b;}
+  .dot:nth-child(3){background:#10b981;}
+  .efield{display:flex;align-items:baseline;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);}
+  .efield:last-child{border-bottom:none;}
+  .elbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;width:52px;flex-shrink:0;}
+  .eval{font-size:13px;color:var(--text);}
+  .eval.subj{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--accent2);}
+  .ebody{padding:24px 26px;font-size:14px;line-height:1.85;color:var(--text);min-height:260px;white-space:pre-wrap;font-weight:300;}
+  .ebody.empty{color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;display:flex;align-items:center;justify-content:center;font-style:italic;min-height:200px;text-align:center;}
+  .abar{display:flex;gap:8px;padding:12px 20px;border-top:1px solid var(--border);justify-content:flex-end;align-items:center;flex-wrap:wrap;}
+  .wc{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-right:auto;}
+  .btn-copy{padding:7px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+  .btn-copy:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-copy.hi{border-color:var(--accent2);color:var(--accent2);}
+  .btn-copy.hi:hover{background:rgba(245,158,11,.08);}
+  .improve-bar{display:none;margin-top:12px;background:var(--surface);border:1px solid rgba(245,158,11,.3);border-radius:12px;overflow:hidden;}
+  .improve-bar.show{display:block;}
+  .improve-hd{padding:11px 16px;border-bottom:1px solid rgba(245,158,11,.15);display:flex;align-items:center;gap:8px;}
+  .improve-hd span{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);text-transform:uppercase;letter-spacing:.1em;}
+  .improve-body{padding:12px 16px;display:flex;gap:8px;align-items:flex-end;}
+  .improve-body textarea{min-height:48px;font-size:12px;border-color:rgba(245,158,11,.25);flex:1;}
+  .improve-body textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(245,158,11,.08);}
+  .btn-improve{padding:10px 16px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);border-radius:8px;color:var(--accent2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+  .btn-improve:hover{background:rgba(245,158,11,.22);}
+  .btn-improve:disabled{opacity:.35;cursor:not-allowed;}
+  .seq-steps{display:flex;flex-direction:column;gap:12px;}
+  .seq-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .seq-step-hd{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);}
+  .step-num{width:28px;height:28px;border-radius:50%;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:var(--accent);flex-shrink:0;}
+  .step-meta{flex:1;}
+  .step-label{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
+  .step-timing{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;}
+  .step-body{padding:16px 18px;font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-weight:300;}
+  .step-body.empty{color:var(--muted);font-style:italic;font-size:12px;}
+  .step-subj{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);margin-bottom:8px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+  .spin.dark{border-color:rgba(59,130,246,.25);border-top-color:var(--accent);}
+  .spin.amber{border-color:rgba(245,158,11,.25);border-top-color:var(--accent2);}
+  .spin.violet{border-color:rgba(165,180,252,.25);border-top-color:#a5b4fc;}
+  /* OAuth connect button */
+  .btn-outreach{padding:7px 14px;border-radius:7px;border:1px solid rgba(99,102,241,.5);background:rgba(99,102,241,.1);color:#a5b4fc;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+  .btn-outreach:hover{background:rgba(99,102,241,.2);border-color:#a5b4fc;}
+  .btn-outreach:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-outreach.connected{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.1);color:var(--accent3);}
+  .btn-outreach.connected:hover{background:rgba(16,185,129,.2);}
+  .conn-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:6px;vertical-align:middle;}
+  .conn-dot.on{background:var(--accent3);box-shadow:0 0 6px var(--accent3);}
+  .outreach-status{margin-top:10px;padding:11px 16px;border-radius:10px;font-family:'DM Mono',monospace;font-size:11px;display:none;line-height:1.6;white-space:pre-wrap;}
+  .outreach-status.show{display:block;}
+  .outreach-status.ok{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:var(--accent3);}
+  .outreach-status.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);color:var(--red);}
+  .outreach-status.loading{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);color:var(--accent);}
+  .toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--accent3);border-radius:9px;padding:10px 18px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent3);opacity:0;transform:translateY(6px);transition:all .28s;z-index:999;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Edge226 · Cold Outreach System</div>
+  <h1>Book the <em>Discovery Call</em></h1>
+  <p class="sub">AI-personalized cold outreach using AppMagic app data, LinkedIn activity, and company intelligence — built on Edge226's CPA-first positioning.</p>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <div class="phd"><div class="pip a"></div><h3>Prospect</h3></div>
+        <div class="pbd">
+          <div class="fg"><label>Full Name</label><input type="text" id="p-name" placeholder="e.g. Kim Park" /></div>
+          <div class="fg"><label>Title</label><input type="text" id="p-title" placeholder="e.g. Head of User Acquisition" /></div>
+          <div class="fg">
+            <label>Company</label>
+            <div class="row2">
+              <input type="text" id="p-company" placeholder="e.g. Jam City" />
+              <button class="btn-research" id="btn-co" onclick="researchCompany()">Research ↗</button>
+            </div>
+            <div class="ibox" id="co-box"><strong>✦ Company intelligence</strong><span id="co-text"></span></div>
+          </div>
+          <div class="fg">
+            <label>Prospect Email <span>(for Outreach)</span></label>
+            <input type="email" id="p-email" placeholder="kim@jamcity.com" />
+          </div>
+          <div class="fg">
+            <label>Company Context <span>(auto-filled or edit)</span></label>
+            <textarea id="p-context" placeholder="Named apps, recent launches, funding, markets…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="phd"><div class="pip b"></div><h3>Person Research</h3></div>
+        <div class="pbd">
+          <div class="fg">
+            <button class="btn-block" id="btn-person" onclick="researchPerson()">Research Person on Web ↗</button>
+            <div class="ibox" id="person-box"><strong>✦ Person insights</strong><span id="person-text"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="phd"><div class="pip g"></div><h3>AppMagic App Data</h3></div>
+        <div class="pbd">
+          <div class="fg">
+            <label>App Name <span>(specific title to look up)</span></label>
+            <input type="text" id="p-app" placeholder="e.g. Disney Magic Match 3D" />
+          </div>
+          <div class="fg">
+            <button class="btn-block" id="btn-app" onclick="researchApp()">Research App Data ↗</button>
+            <div class="ibox" id="app-box"><strong>✦ App performance data</strong><span id="app-text"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="phd"><div class="pip b"></div><h3>Your Info</h3></div>
+        <div class="pbd">
+          <div class="fg"><label>Your Name</label><input type="text" id="s-name" placeholder="e.g. Alex Rivera" /></div>
+          <div class="fg"><label>Your Title</label><input type="text" id="s-title" placeholder="e.g. Head of Partnerships" /></div>
+          <div class="fg"><label>Calendar Link <span>(optional)</span></label><input type="text" id="s-cal" placeholder="e.g. calendly.com/edge226/discovery" /></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="phd"><div class="pip a"></div><h3>Email Variant</h3></div>
+        <div class="pbd">
+          <div class="variants">
+            <div class="vc on" data-v="cold" onclick="pickV(this)"><div class="vc-dot"></div><div class="vc-num">01</div><div class="vc-name">Cold Intro</div><div class="vc-desc">Data observation first — no opening question</div></div>
+            <div class="vc" data-v="launch" onclick="pickV(this)"><div class="vc-dot"></div><div class="vc-num">02</div><div class="vc-name">Post-Launch</div><div class="vc-desc">Anchored to a recent app launch with real data</div></div>
+            <div class="vc" data-v="data" onclick="pickV(this)"><div class="vc-dot"></div><div class="vc-num">03</div><div class="vc-name">Data-Led</div><div class="vc-desc">Opens with a specific AppMagic number as the hook</div></div>
+            <div class="vc" data-v="comp" onclick="pickV(this)"><div class="vc-dot"></div><div class="vc-num">04</div><div class="vc-name">Competitor Angle</div><div class="vc-desc">Reference how peers in their genre approach UA</div></div>
+          </div>
+          <div class="fg" style="margin-top:16px;">
+            <label>Challenge Angle</label>
+            <div class="tags" id="pain-tags">
+              <div class="tag on" data-v="cpi">CPM vs CPA</div>
+              <div class="tag" data-v="roas">ROAS Accountability</div>
+              <div class="tag" data-v="ua">UA Efficiency</div>
+              <div class="tag" data-v="cpa">CPA Optimization</div>
+              <div class="tag" data-v="mix">Channel Mix</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-gen" onclick="generateEmail()">Generate Email →</button>
+      <button class="btn-seq" id="btn-seq" onclick="generateSequence()">Generate Full Sequence →</button>
+    </div>
+
+    <div class="output-pane">
+      <div class="otabs">
+        <button class="otab on" onclick="switchOut('email')">Email</button>
+        <button class="otab" onclick="switchOut('sequence')">Sequence</button>
+      </div>
+
+      <div class="otab-content on" id="out-email">
+        <div class="email-card">
+          <div class="email-chrome">
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            <div class="efield"><span class="elbl">From</span><span class="eval" id="ef-from">—</span></div>
+            <div class="efield"><span class="elbl">To</span><span class="eval" id="ef-to">—</span></div>
+            <div class="efield"><span class="elbl">Subject</span><span class="eval subj" id="ef-subj">—</span></div>
+          </div>
+          <div class="ebody empty" id="ef-body">← Fill in the fields on the left, then generate your email</div>
+          <div class="abar">
+            <span class="wc" id="wc"></span>
+            <button class="btn-copy" onclick="copyBody()">Copy Body</button>
+            <button class="btn-copy hi" onclick="copySubj()">Copy Subject</button>
+            <button class="btn-copy" onclick="copyAll()">Copy All</button>
+            <button class="btn-outreach" id="btn-outreach" onclick="handleOutreachClick()">
+              <span class="conn-dot" id="conn-dot"></span><span id="conn-label">Connect Outreach</span>
+            </button>
+            <button class="btn-copy" id="btn-check" onclick="checkConnectionStatus().then(()=>toast(outreachConnected?'✓ Connected':'Not connected'))">Check</button>
+            <button class="btn-copy" style="border-color:var(--accent3);color:var(--accent3)" onclick="setConnected(true);toast('Outreach marked as connected ✓')">Force ✓</button>
+            <button class="btn-copy" id="btn-disconnect" style="display:none;border-color:var(--red);color:var(--red)" onclick="handleDisconnect()">Disconnect</button>
+          </div>
+        </div>
+
+        <div class="improve-bar" id="improve-bar">
+          <div class="improve-hd"><div class="pip a"></div><span>Improve this email</span></div>
+          <div class="improve-body">
+            <textarea id="improve-input" placeholder="e.g. make the CTA sharper, shorten to 80 words, change the opener to reference their CTV spend…"></textarea>
+            <button class="btn-improve" id="btn-improve" onclick="improveEmail()">Rewrite ↗</button>
+          </div>
+        </div>
+        <div class="outreach-status" id="outreach-status"></div>
+      </div>
+
+      <div class="otab-content" id="out-sequence">
+        <div class="seq-steps" id="seq-steps">
+          <div style="padding:40px;text-align:center;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;font-style:italic;">
+            ← Generate the full sequence to see all 3 touches here
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var WORKER = 'https://outreach-proxy.sam-giambrone.workers.dev';
+var selVariant = 'cold';
+var selPain = 'cpi';
+var personHook = '', appData = '', coData = '';
+var lastSubject = '', lastBody = '';
+var outreachConnected = false;
+
+var painMap = {
+  cpi:  'CPM vs CPA — they care about cost-per-acquisition but are buying impressions on CPM. Edge226 flips this: clients pay only for the acquisition, not the impression.',
+  roas: 'ROAS accountability — they care about ROAS but are running CPM buys on channels that can\'t price on outcomes. Edge226 removes this mismatch by pricing on results, not media.',
+  ua:   'UA efficiency — they care about scaling installs without letting CPM waste erode their targets. Edge226 unifies in-app, CTV, and rewarded under one CPA price so waste has nowhere to hide.',
+  cpa:  'CPA optimization — they care about hitting CPA goals but are buying on CPM across 3+ vendors with no unified accountability. Edge226 collapses this into one CPA-priced relationship.',
+  mix:  'channel mix — they care about efficient budget allocation but every channel reports on a different metric. Edge226 standardizes the unit of purchase to CPA across all channels.'
+};
+var variantMap = {
+  cold:   'Cold intro — first touch. Open with "I saw / I noticed / I was looking at" + a specific data point about their app. Sound like a real person who came across something interesting, not an analyst. Connect what you saw to the UA tension it implies — the CPM/CPA gap. Surface Edge226 as personal context. Close with a value-led CTA. Conversational, peer-to-peer.',
+  launch: 'Post-launch — anchored to a recent app launch or title update. Use real download or revenue data. Surface Edge226\'s CPA model as relevant to the scaling challenge post-launch. Close with a value-led CTA about managing UA costs as the title scales.',
+  data:   'Data-led — open with a specific app performance number as the hook. Use that number to frame why the CPM/CPA mismatch matters for them specifically. Briefly mention Edge226 prices on CPA. End with a value-led CTA.',
+  comp:   'Competitor angle — reference how other top publishers in their genre approach the same UA challenge. Surface Edge226\'s CPA model as a contrast to how most of the market still buys. Curious tone, not threatening. Close with a value-led CTA.'
+};
+var edge226 = `Edge226 offer context:
+- Replaces CPM-based buying with CPA-based pricing: clients pay for installs and growth, not impressions
+- Covers in-app, CTV, and rewarded advertising under one CPA price
+- Core tension: UA teams care about CPA/ROAS but are forced to buy on CPM across fragmented vendors
+- The angle: "we take on the CPM risk so you don't have to — you only pay when it works"
+- Goal: book a 30-min discovery call`;
+
+// ── OAuth ─────────────────────────────────────────────────────
+async function checkConnectionStatus() {
+  try {
+    var res = await fetch(WORKER + '/auth/status');
+    var d = await res.json();
+    setConnected(d.connected);
+  } catch(e) {
+    setConnected(false);
+  }
+}
+
+function setConnected(val) {
+  outreachConnected = val;
+  var dot = document.getElementById('conn-dot');
+  var lbl = document.getElementById('conn-label');
+  var btn = document.getElementById('btn-outreach');
+  dot.className = 'conn-dot' + (val ? ' on' : '');
+  if (val) {
+    lbl.textContent = 'Push to Outreach';
+    btn.className = 'btn-outreach connected';
+  } else {
+    lbl.textContent = 'Connect Outreach';
+    btn.className = 'btn-outreach';
+  }
+}
+
+function handleOutreachClick() {
+  if (!outreachConnected) {
+    var popup = window.open(WORKER + '/auth/login', 'outreach_oauth',
+      'width=600,height=700,scrollbars=yes,resizable=yes');
+    // Listen for postMessage (works when hosted on own domain)
+    window.addEventListener('message', function handler(e) {
+      if (e.data && e.data.type === 'OUTREACH_CONNECTED') {
+        window.removeEventListener('message', handler);
+        setConnected(true);
+        toast('Outreach connected ✓');
+        if (popup && !popup.closed) popup.close();
+      }
+    });
+    // Fallback: poll for connection status while popup is open
+    var poll = setInterval(async function() {
+      if (!popup || popup.closed) {
+        clearInterval(poll);
+        await checkConnectionStatus();
+      }
+    }, 1000);
+  } else {
+    pushToOutreach();
+  }
+}
+
+async function disconnectOutreach() {
+  await fetch(WORKER + '/auth/disconnect', { method: 'DELETE' });
+  setConnected(false);
+  toast('Outreach disconnected');
+}
+
+// ── UI helpers ────────────────────────────────────────────────
+document.querySelectorAll('#pain-tags .tag').forEach(function(t) {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('#pain-tags .tag').forEach(function(x){ x.classList.remove('on'); });
+    t.classList.add('on');
+    selPain = t.dataset.v;
+  });
+});
+
+function pickV(el) {
+  document.querySelectorAll('.vc').forEach(function(v){ v.classList.remove('on'); });
+  el.classList.add('on');
+  selVariant = el.dataset.v;
+}
+
+function switchOut(name) {
+  document.querySelectorAll('.otab').forEach(function(t,i){ t.classList.toggle('on', ['email','sequence'][i]===name); });
+  document.querySelectorAll('.otab-content').forEach(function(c){ c.classList.toggle('on', c.id==='out-'+name); });
+}
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+
+function setBtn(id, html, off) {
+  var b = document.getElementById(id); if (!b) return;
+  b.innerHTML = html; b.disabled = !!off;
+}
+
+function copyBody() {
+  var b = document.getElementById('ef-body').textContent;
+  if (b.includes('←')) return;
+  navigator.clipboard.writeText(b); toast('Body copied ✓');
+}
+function copySubj() {
+  var s = document.getElementById('ef-subj').textContent;
+  if (s === '—') return;
+  navigator.clipboard.writeText(s); toast('Subject copied ✓');
+}
+function copyAll() {
+  var s = document.getElementById('ef-subj').textContent;
+  var b = document.getElementById('ef-body').textContent;
+  if (b.includes('←')) return;
+  navigator.clipboard.writeText('Subject: ' + s + '\n\n' + b); toast('Email copied ✓');
+}
+
+// ── Claude API ────────────────────────────────────────────────
+async function claude(sys, user, search) {
+  var payload = { model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user',content:user}] };
+  if (search) payload.tools = [{type:'web_search_20250305',name:'web_search'}];
+  var res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+  });
+  var d = await res.json();
+  var tb = (d.content||[]).find(function(b){ return b.type==='text'; });
+  var raw = tb ? tb.text.trim() : '';
+  var m = raw.match(/\{[\s\S]*\}/);
+  if (m) { try { return JSON.parse(m[0]); } catch(e){} }
+  return { summary:raw, hook:'', subject:'', body:raw };
+}
+
+// ── Outreach API via Worker ───────────────────────────────────
+async function workerAPI(method, path, body) {
+  var opts = { method, headers:{'Content-Type':'application/vnd.api+json','Accept':'application/vnd.api+json'} };
+  if (body) opts.body = JSON.stringify(body);
+  var res = await fetch(WORKER + path, opts);
+  var text = await res.text();
+  try {
+    var json = JSON.parse(text);
+    if (json.error === 'NOT_CONNECTED') { setConnected(false); throw new Error('NOT_CONNECTED'); }
+    if (!res.ok) return { error:true, message:'HTTP ' + res.status + ': ' + (json.errors?.[0]?.title || text.substring(0,200)) };
+    return json;
+  } catch(e) {
+    if (e.message === 'NOT_CONNECTED') throw e;
+    return { error:true, message:'HTTP ' + res.status + ': ' + text.substring(0,200) };
+  }
+}
+
+// ── Research ──────────────────────────────────────────────────
+async function researchCompany() {
+  var co = document.getElementById('p-company').value.trim();
+  if (!co) { toast('Enter company name first'); return; }
+  setBtn('btn-co', '<span class="spin dark"></span>Researching…', true);
+  try {
+    var r = await claude(
+      `You are a B2B sales research assistant. Research this mobile app company and return SPECIFIC, NAMED intelligence only. Find: exact app titles in their portfolio, recent named launches with dates, genres, funding rounds, key markets. No vague language — name real apps and events. Return ONLY JSON: {"summary":"2-3 sentences with named apps and events","hook":"1 sentence max 20 words referencing a specific named app or event"}. No markdown.`,
+      'Research this mobile app company for cold outreach personalization: ' + co, true
+    );
+    coData = r.summary || '';
+    document.getElementById('co-text').textContent = coData + (r.hook ? '\n\nHook: "' + r.hook + '"' : '');
+    document.getElementById('co-box').classList.add('show');
+    var ctx = document.getElementById('p-context');
+    if (!ctx.value.trim()) ctx.value = coData;
+    toast('Company research done ✓');
+  } catch(e) { toast('Research failed — try again'); }
+  setBtn('btn-co', 'Research ↗', false);
+}
+
+async function researchPerson() {
+  var name = document.getElementById('p-name').value.trim();
+  var title = document.getElementById('p-title').value.trim();
+  var co = document.getElementById('p-company').value.trim();
+  if (!name) { toast('Enter prospect name first'); return; }
+  setBtn('btn-person', '<span class="spin dark"></span>Researching…', true);
+  personHook = '';
+  try {
+    var r = await claude(
+      `You are a B2B sales research assistant. Find specific, named, verifiable professional activity for this person. Return ONLY JSON: {"summary":"2 sentences — role and ONE specific named recent activity","hook":"1 sentence max 20 words referencing that specific activity. Empty string if nothing specific found."}. No markdown.`,
+      `Research for cold outreach:\nName: ${name}\nTitle: ${title||'unknown'}\nCompany: ${co||'unknown'}`, true
+    );
+    personHook = r.hook || '';
+    document.getElementById('person-text').textContent = (r.summary||'') + (personHook ? '\n\nHook: "' + personHook + '"' : '');
+    document.getElementById('person-box').classList.add('show');
+    toast('Person research done ✓');
+  } catch(e) { toast('Research failed — try again'); }
+  setBtn('btn-person', 'Research Person on Web ↗', false);
+}
+
+async function researchApp() {
+  var app = document.getElementById('p-app').value.trim();
+  var co  = document.getElementById('p-company').value.trim();
+  if (!app && !co) { toast('Enter an app name or company first'); return; }
+  setBtn('btn-app', '<span class="spin dark"></span>Researching…', true);
+  appData = '';
+  try {
+    var r = await claude(
+      `You are a mobile app market analyst. Search for real performance data on this app. Return SPECIFIC numbers only. Return ONLY JSON: {"summary":"2-3 sentences with specific numbers and named app","hook":"1 sentence max 20 words using one specific data point as a natural conversation opener"}. No markdown.`,
+      `Find real app performance data:\nApp: ${app||'top apps'}\nPublisher: ${co||'unknown'}\nLook for: monthly downloads, revenue estimates, market count, store rank, recent trends.`, true
+    );
+    appData = r.summary || '';
+    document.getElementById('app-text').textContent = appData + (r.hook ? '\n\nHook: "' + r.hook + '"' : '');
+    document.getElementById('app-box').classList.add('show');
+    toast('App data researched ✓');
+  } catch(e) { toast('Research failed — try again'); }
+  setBtn('btn-app', 'Research App Data ↗', false);
+}
+
+// ── Email generation ──────────────────────────────────────────
+function buildContext() {
+  var pname  = document.getElementById('p-name').value.trim();
+  var ptitle = document.getElementById('p-title').value.trim();
+  var pco    = document.getElementById('p-company').value.trim();
+  var pemail = document.getElementById('p-email').value.trim();
+  var pctx   = document.getElementById('p-context').value.trim();
+  var sname  = document.getElementById('s-name').value.trim() || '[Your Name]';
+  var stitle = document.getElementById('s-title').value.trim() || 'Edge226';
+  var cal    = document.getElementById('s-cal').value.trim();
+  return { pname, ptitle, pco, pemail, pctx, sname, stitle, cal, fname: pname ? pname.split(' ')[0] : '[First Name]' };
+}
+
+function renderEmail(subj, body, from, to) {
+  document.getElementById('ef-from').textContent = from;
+  document.getElementById('ef-to').textContent   = to;
+  document.getElementById('ef-subj').textContent = subj;
+  var bodyEl = document.getElementById('ef-body');
+  bodyEl.classList.remove('empty');
+  bodyEl.textContent = body;
+  bodyEl.style.opacity = '0';
+  requestAnimationFrame(function(){ bodyEl.style.transition='opacity .3s'; bodyEl.style.opacity='1'; });
+  document.getElementById('wc').textContent = body.split(/\s+/).filter(Boolean).length + ' words';
+  lastSubject = subj; lastBody = body;
+  document.getElementById('improve-bar').classList.add('show');
+}
+
+async function generateEmail() {
+  var c = buildContext();
+  setBtn('btn-gen', '<span class="spin"></span>Generating…', true);
+  var sys = `You are an expert cold email writer for Edge226, a UA performance network. Write a conversational, peer-to-peer cold email whose sole goal is to book a 30-minute discovery call.
+RULES:
+1. Open with a first-person observation — "I saw", "I noticed", "I was looking at" — referencing a specific data point. Sound like a real person, not an analyst.
+2. Use "I" throughout. Conversational, not a briefing.
+3. Connect what you saw to the UA challenge — the CPM/CPA tension — naturally.
+4. Reference Edge226's offer as personal context, not a pitch.
+5. CTA: make it worth their time — tell them what they'll walk away with. Never say "compare notes", "grab time", or "hop on a call."
+6. Under 120 words. No buzzwords. No "I hope this email finds you well." No "I wanted to reach out."
+7. Subject line: MAX 5 words. Lowercase. No punctuation.
+8. Sign off with sender name and Edge226.
+Return ONLY JSON: {"subject":"...","body":"..."}. No markdown. No explanation.`;
+  var user = `Write this cold email now.\nRecipient: ${c.fname}${c.pco?' at '+c.pco:''}${c.ptitle?', '+c.ptitle:''}\nSender: ${c.sname}, Edge226\nVariant: ${variantMap[selVariant]}\nChallenge angle: ${painMap[selPain]}\n${edge226}\n${personHook?'Person hook: "'+personHook+'"':''}\n${appData?'AppMagic data: '+appData:''}\n${c.pctx?'Company context: '+c.pctx:''}\n${c.cal?'Calendar link: '+c.cal:''}\nBe specific. Open with data, not a question.`;
+  try {
+    var r = await claude(sys, user, false);
+    renderEmail(r.subject||'(no subject)', r.body||'', c.sname+' — Edge226', c.fname+(c.pco?' @ '+c.pco:''));
+    var btn = document.getElementById('btn-gen');
+    btn.textContent = '✓ Generated';
+    btn.style.background = 'linear-gradient(135deg,#065f46,#10b981)';
+    setTimeout(function(){ btn.textContent='Generate Email →'; btn.style.background=''; btn.disabled=false; }, 1600);
+    switchOut('email');
+  } catch(e) {
+    toast('Generation failed — try again');
+    setBtn('btn-gen', 'Generate Email →', false);
+  }
+}
+
+async function improveEmail() {
+  var instruction = document.getElementById('improve-input').value.trim();
+  if (!instruction) { toast('Describe how to improve it'); return; }
+  if (!lastBody) { toast('Generate an email first'); return; }
+  setBtn('btn-improve', '<span class="spin amber"></span>Rewriting…', true);
+  var sys = `You are an expert cold email editor for Edge226. Rewrite the email applying the instruction precisely. Keep what works — only change what the instruction asks. Maintain peer-to-peer tone. Return ONLY JSON: {"subject":"...","body":"..."}. No markdown.`;
+  var user = `Current email:\nSubject: ${lastSubject}\nBody: ${lastBody}\n\nImprovement instruction: ${instruction}\n\nRewrite it now.`;
+  try {
+    var r = await claude(sys, user, false);
+    var c = buildContext();
+    renderEmail(r.subject||lastSubject, r.body||lastBody, c.sname+' — Edge226', c.fname+(c.pco?' @ '+c.pco:''));
+    document.getElementById('improve-input').value = '';
+    toast('Email improved ✓');
+  } catch(e) { toast('Rewrite failed — try again'); }
+  setBtn('btn-improve', 'Rewrite ↗', false);
+}
+
+async function generateSequence() {
+  var c = buildContext();
+  setBtn('btn-seq', '<span class="spin"></span>Generating sequence…', true);
+  var steps = document.getElementById('seq-steps');
+  steps.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-family:\'DM Mono\',monospace;font-size:12px;"><span class="spin dark"></span> Building 3-touch sequence…</div>';
+  switchOut('sequence');
+  var sys = `You are an expert cold outreach strategist for Edge226. Write a 3-touch cold email sequence to book a 30-min discovery call. Each email must use a completely different angle and escalate naturally. Write in first person, conversationally.
+SEQUENCE STRUCTURE:
+- T1 (Day 1): Cold intro. Open with "I saw / I noticed" + specific data point. Connect to UA tension. Edge226 as context. Value-led CTA. Under 100 words.
+- T2 (Day 5–6, no reply): New angle entirely. Different data point or competitor reference. Fresh angle on Edge226. Value-led CTA. Under 90 words.
+- T3 (Day 11–12, no reply): Short, honest note. "I figure the timing might be off…" Leave door open. Under 60 words.
+RULES FOR ALL THREE:
+- Use exact app names, real numbers — never generic references
+- Subject lines: MAX 5 words, lowercase, no punctuation
+- No buzzwords. No "circling back." CTA must lead with what they get.
+- Sign each email: sender name / Edge226
+Return ONLY JSON: {"t1":{"subject":"...","body":"..."},"t2":{"subject":"...","body":"..."},"t3":{"subject":"...","body":"..."}}. No markdown.`;
+  var user = `Write the 3-touch sequence now.\nRecipient: ${c.fname}${c.pco?' at '+c.pco:''}${c.ptitle?', '+c.ptitle:''}\nSender: ${c.sname}, Edge226\nChallenge angle: ${painMap[selPain]}\n${edge226}\n${personHook?'Person hook: "'+personHook+'"':''}\n${appData?'AppMagic data: '+appData:''}\n${c.pctx?'Company context: '+c.pctx:''}\n${c.cal?'Calendar link: '+c.cal:''}`;
+  try {
+    var r = await claude(sys, user, false);
+    var timings = ['Send Day 1','Follow up Day 5–6','Follow up Day 11–12'];
+    var labels  = ['Touch 1 — Cold Intro','Touch 2 — New Angle','Touch 3 — Soft Breakup'];
+    var keys    = ['t1','t2','t3'];
+    steps.innerHTML = '';
+    keys.forEach(function(k, i) {
+      var t = r[k] || {};
+      var el = document.createElement('div');
+      el.className = 'seq-step';
+      el.innerHTML =
+        '<div class="seq-step-hd">'+
+          '<div class="step-num">'+(i+1)+'</div>'+
+          '<div class="step-meta"><div class="step-label">'+labels[i]+'</div><div class="step-timing">'+timings[i]+'</div></div>'+
+          '<button class="btn-copy" style="font-size:9px;padding:5px 10px" onclick="copyStep('+i+')">Copy</button>'+
+        '</div>'+
+        '<div style="padding:12px 18px 0;"><div class="step-subj">Subject: '+(t.subject||'—')+'</div></div>'+
+        '<div class="step-body'+(t.body?'':' empty')+'" id="step-body-'+i+'">'+(t.body||'Not generated')+'</div>';
+      steps.appendChild(el);
+    });
+    toast('Sequence generated ✓');
+  } catch(e) {
+    steps.innerHTML = '<div style="padding:40px;text-align:center;color:var(--red);font-family:\'DM Mono\',monospace;font-size:12px;">Generation failed — try again</div>';
+  }
+  setBtn('btn-seq', 'Generate Full Sequence →', false);
+}
+
+function copyStep(i) {
+  var subj = document.querySelector('#seq-steps .seq-step:nth-child('+(i+1)+') .step-subj').textContent;
+  var body = document.getElementById('step-body-'+i).textContent;
+  navigator.clipboard.writeText(subj+'\n\n'+body);
+  toast('Touch '+(i+1)+' copied ✓');
+}
+
+// ── Push to Outreach ──────────────────────────────────────────
+function setOutreachStatus(type, msg) {
+  var el = document.getElementById('outreach-status');
+  el.className = 'outreach-status show ' + type;
+  el.innerHTML = msg;
+}
+
+async function pushToOutreach() {
+  if (!lastBody) { toast('Generate an email first'); return; }
+  var c = buildContext();
+  if (!c.pname)  { toast('Enter prospect name first'); return; }
+  if (!c.pemail) { toast('Enter prospect email first'); return; }
+
+  var ob = document.getElementById('btn-outreach');
+  ob.innerHTML = '<span class="spin violet"></span>Pushing…';
+  ob.disabled = true;
+  setOutreachStatus('loading', '<span class="spin dark"></span> Searching for existing prospect…');
+
+  try {
+    // Search for existing prospect
+    var searchRes = await workerAPI('GET', '/api/v2/prospects?filter[emails]=' + encodeURIComponent(c.pemail), null);
+    var prospectId = null;
+
+    if (searchRes.data && searchRes.data.length > 0) {
+      prospectId = searchRes.data[0].id;
+      setOutreachStatus('loading', '<span class="spin dark"></span> Found prospect (ID: '+prospectId+'). Creating mailing…');
+    } else {
+      setOutreachStatus('loading', '<span class="spin dark"></span> Creating new prospect…');
+      var nameParts = c.pname.split(' ');
+      var createRes = await workerAPI('POST', '/api/v2/prospects', {
+        data: { type:'prospect', attributes:{
+          firstName: nameParts[0]||'', lastName: nameParts.slice(1).join(' ')||'',
+          title: c.ptitle||'', company: c.pco||'', emails:[c.pemail]
+        }}
+      });
+      if (createRes.error || !createRes.data) throw new Error(createRes.message||'Failed to create prospect');
+      prospectId = createRes.data.id;
+      setOutreachStatus('loading', '<span class="spin dark"></span> Created prospect (ID: '+prospectId+'). Creating mailing…');
+    }
+
+    var mailingRes = await workerAPI('POST', '/api/v2/mailings', {
+      data: { type:'mailing', attributes:{
+        subject: lastSubject,
+        bodyHtml: '<div style="font-family:sans-serif;font-size:14px;line-height:1.7;">'+lastBody.replace(/\n/g,'<br>')+'</div>',
+        bodyText: lastBody, mailboxAddress:''
+      }, relationships:{ prospect:{ data:{ type:'prospect', id:String(prospectId) } } } }
+    });
+
+    if (mailingRes.error) {
+      setOutreachStatus('ok', '✓ Prospect saved (ID: '+prospectId+')\nName: '+c.pname+'\nEmail: '+c.pemail+'\n\n⚠ Mailing draft could not be created automatically.\nReason: '+(mailingRes.message||'Check Outreach mailbox permissions')+'\n\nAction: Open Outreach → Prospects → find "'+c.pname+'" → manually add the email draft.');
+      toast('Prospect added — mailing needs manual step');
+    } else {
+      var mid = mailingRes.data ? mailingRes.data.id : '—';
+      setOutreachStatus('ok', '✓ Pushed to Outreach!\n\nProspect: '+c.pname+' ('+c.pemail+')\nProspect ID: '+prospectId+'\nMailing ID: '+mid+'\nSubject: "'+lastSubject+'"\n\nReview and send from Outreach → Mailings.');
+      toast('Pushed to Outreach ✓');
+    }
+  } catch(e) {
+    if (e.message === 'NOT_CONNECTED') {
+      setOutreachStatus('err', '✗ Not connected to Outreach.\nClick "Connect Outreach" to authenticate.');
+    } else {
+      setOutreachStatus('err', '✗ Push failed\n\n' + (e.message||String(e)));
+    }
+    toast('Outreach push failed');
+  }
+
+  ob.innerHTML = '<span class="conn-dot on"></span><span>Push to Outreach</span>';
+  ob.disabled = false;
+}
+
+// ── Init ──────────────────────────────────────────────────────
+checkConnectionStatus();
+</script>
+</body>
+</html>
