@@ -411,17 +411,24 @@ function copyAll() {
 
 // ── Claude API ────────────────────────────────────────────────
 async function claude(sys, user, search) {
-  var payload = { model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user',content:user}] };
-  if (search) payload.tools = [{type:'web_search_20250305',name:'web_search'}];
-  var res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+  var payload = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1200,
+    system: sys,
+    messages: [{ role: 'user', content: user }]
+  };
+  if (search) payload.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+  var res = await fetch(WORKER + '/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
   });
   var d = await res.json();
   var tb = (d.content||[]).find(function(b){ return b.type==='text'; });
   var raw = tb ? tb.text.trim() : '';
   var m = raw.match(/\{[\s\S]*\}/);
   if (m) { try { return JSON.parse(m[0]); } catch(e){} }
-  return { summary:raw, hook:'', subject:'', body:raw };
+  return { summary: raw, hook: '', subject: '', body: raw };
 }
 
 // ── Outreach API via Worker ───────────────────────────────────
