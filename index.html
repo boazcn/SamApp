@@ -282,6 +282,7 @@ var selPain = 'cpi';
 var personHook = '', appData = '', coData = '';
 var lastSubject = '', lastBody = '';
 var outreachConnected = false;
+var outreachMailboxId = null;
 
 var painMap = {
   cpi:  'CPM vs CPA — they care about cost-per-acquisition but are buying impressions on CPM. Edge226 flips this: clients pay only for the acquisition, not the impression.',
@@ -308,6 +309,14 @@ async function checkConnectionStatus() {
   try {
     var res = await fetch(WORKER + '/auth/status');
     var d = await res.json();
+    if (d.connected) {
+      // fetch mailbox ID alongside status
+      try {
+        var me = await fetch(WORKER + '/auth/me');
+        var md = await me.json();
+        if (md.mailbox_id) outreachMailboxId = String(md.mailbox_id);
+      } catch(e) {}
+    }
     setConnected(d.connected);
   } catch(e) {
     setConnected(false);
